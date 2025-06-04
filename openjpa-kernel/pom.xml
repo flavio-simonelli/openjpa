@@ -108,11 +108,12 @@
                     </execution>
                 </executions>
             </plugin>
+<!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
-          <!--          <execution>
+                        <execution>
                         <id>add-was-interfaces</id>
                         <phase>process-classes</phase>
                         <configuration>
@@ -123,7 +124,7 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
-                    </execution>-->
+                    </execution>
                     <execution>
                         <id>generate-standard-sco-proxies</id>
                         <phase>process-classes</phase>
@@ -140,6 +141,7 @@
                     </execution>
                 </executions>
             </plugin>
+-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

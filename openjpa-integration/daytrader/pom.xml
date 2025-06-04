@@ -110,7 +110,8 @@
                 </executions>
             </plugin>
 
-            <!-- old way of using antrun to enhance classes
+
+<!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -135,7 +136,7 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
+-->
 
             <!-- new way of using openjpa-maven-plugin to enhance classes -->
             <plugin>

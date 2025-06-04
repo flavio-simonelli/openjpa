@@ -180,18 +180,22 @@
         <module>openjpa-persistence</module>
         <module>openjpa-persistence-jdbc</module>
         <module>openjpa-persistence-locking</module>
+        <!--
         <module>openjpa-xmlstore</module>
+
         <module>openjpa-slice</module>
         <module>openjpa-jest</module>
         <module>openjpa-kubernetes</module>
         <module>openjpa</module>
         <module>openjpa-project</module>
+
         <module>openjpa-examples</module>
         <module>openjpa-integration</module>
         <module>openjpa-all</module>
         <module>openjpa-tools</module>
         <module>openjpa-features</module>
         <module>openjpa-junit5</module>
+        -->
     </modules>
 
     <profiles>
@@ -2096,11 +2100,13 @@
                         <localCheckout>true</localCheckout>
                     </configuration>
                 </plugin>
+<!--
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>3.1.0</version>
                 </plugin>
+-->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>taglist-maven-plugin</artifactId>

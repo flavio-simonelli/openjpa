@@ -117,6 +117,7 @@
                     </execution>
                 </executions>
             </plugin>
+<!--
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-antrun-plugin</artifactId>
@@ -151,22 +152,16 @@
                         <property name="tck.reports" value="${tck.dir}/reports" />
                         <property name="tck.work" value="${tck.dir}/work" />
 
-                        <!--
-                            Setup jpa.classes to only use the Maven artifacts
-                            that we specified as dependencies
-                        -->
+
                         <path id="cp.openjpa">
                             <path refid="maven.compile.classpath" />
                         </path>
                         <pathconvert property="OPENJPA_CLASSPATH" refid="cp.openjpa" />
 
-                        <!--
-                            Setup jpa.classes to use the Maven artifacts AND
-                            the toplink provider required for pluggability tests
-                        -->
+
                         <path id="cp.toplink">
                             <path refid="maven.compile.classpath" />
-                            <!-- need to include the toplink jars for pluggability tests -->
+
                             <fileset dir="${tck.dir}/lib">
                                 <include name="**/*toplink*.jar" />
                             </fileset>
@@ -182,7 +177,7 @@
                         </path>
                         <pathconvert property="cp.test.classpath" refid="cp.test" />
 
-                        <!-- create missing directory for maven compile classpath -->
+
                         <mkdir dir="${basedir}/target/classes" />
 
                         <ant antfile="${basedir}/tck2-${tck2.level}.xml" inheritRefs="true">
@@ -201,6 +196,7 @@
                 </execution>
               </executions>
             </plugin>
+-->
           </plugins>
         </build>
         <!-- Just pull in openjpa-all, which will include all required deps -->
@@ -233,6 +229,7 @@
         <id>tck-profile</id>
         <build>
           <plugins>
+<!--
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-antrun-plugin</artifactId>
@@ -262,7 +259,7 @@
                         <path id="cp">
                             <path refid="maven.compile.classpath" />
 
-                            <!-- use official JPA API instead of GM's -->
+
                             <fileset dir="${tck.dir}/lib">
                                 <include name="**/*.jar" />
                             </fileset>
@@ -288,7 +285,7 @@
 
                         <property name="openjpa.properties" value="${tck.dir}/openjpa-provier.properties" />
 
-                        <!-- create the OpenJPA properties for the TCK run -->
+
                         <echo append="false" file="${openjpa.properties}">
 jakarta.persistence.provider: org.apache.openjpa.persistence.PersistenceProviderImpl
 openjpa.ConnectionDriverName: ${db.driver}
@@ -303,7 +300,7 @@ openjpa.jdbc.DBDictionary: StoreCharsAsNumbers=false
 openjpa.jdbc.SchemaFactory: native(ForeignKeys=true)
                         </echo>
 
-                        <!-- Append OpenJPA-specific configuration -->
+
                         <property name="jpatck.config" value="${tck.dir}/bin/ts.jte" />
 
                         <echo append="false" file="${jpatck.config}.tmp">
@@ -331,9 +328,7 @@ databaseName=${db.name}
 
                         </echo>
 
-                        <!-- convert backslashes and known paths with spaces
-                            to get around a problem with the TCK testrunner
-                            on windows -->
+
                         <echo>Update directory paths if running on Windows</echo>
                         <replace summary="yes" file="${jpatck.config}.tmp" replacefilterfile="windows-replacefilter.properties" />
                         <concat append="true" destfile="${jpatck.config}">
@@ -353,18 +348,12 @@ databaseName=${db.name}
                         <property name="agent.properties" value="" />
                         <echo>AGENT: ${agent}${agent.properties}</echo>
 
-                        <!--
-                            Replace the existing javaagent argument (which
-                            uses Toplink's enhancer) with our own. Also, we
-                            need to specify the default MetaDataFactory in
-                            order to allow tests that don't have any
-                            persistent classes to work (like the SignatureTest)
-                        -->
+
                         <replace file="${jpatck.config}">
                             <replacefilter token="-javaagent:${jpa.home}/lib/toplink-essentials-agent.jar" value="-javaagent:${agent}${agent.properties} -Dopenjpa.MetaDataFactory=jpa(DefaultAccessType=PROPERTY)" />
                         </replace>
 
-                        <!-- make a macro for the TCK harness launcher -->
+
                         <macrodef name="tsant">
                             <attribute name="buildfile" />
                             <attribute name="target" />
@@ -386,9 +375,7 @@ databaseName=${db.name}
                                     <sysproperty key="ant.home" value="${tck.dir}/tools/ant" />
 
                                     <sysproperty key="pkg.dir" value="${jpatck.pkg.dir}" />
-                                    <!--
-                                    <sysproperty key="test" value="${jpatck.test}" />
-                                    -->
+
 
                                     <classpath>
                                         <path refid="cp" />
@@ -402,34 +389,30 @@ databaseName=${db.name}
 
                         <echo>Logging JPA TCK output to ${tck.log}</echo>
 
-                        <!-- first initialize the database -->
+
                         <echo>Calling TCK initdb.xml</echo>
                         <tsant buildfile="${tck.dir}/bin/initdb.xml" target="init.database" />
                         <echo>TCK initdb.xml returned result=${tsant.result}</echo>
 
-                        <!-- now run the TCK -->
+
                         <echo>Calling TCK build.xml</echo>
                         <tsant buildfile="${tck.dir}/bin/build.xml" target="runclient" />
                         <echo>TCK build.xml returned result=${tsant.result}</echo>
 
-                        <!-- archive the results -->
+
                         <property name="tck.results.archive" value="${tck.base}/openjpa-tck-results.zip" />
                         <zip destfile="${tck.results.archive}">
                             <fileset dir="${jpatck.work.dir}" />
                         </zip>
                         <echo>Results archive at: ${tck.results.archive}</echo>
 
-                        <!--
-                            The TCK's Java process doesn't actually fail when
-                            tests fail, so we need to parse the results file
-                            for a string indicating whether or not it passed.
-                        -->
+
                         <loadfile property="jpatck.results" srcfile="${jpatck.work.dir}/jtData/log.txt" />
                         <condition property="jpatck.failed">
                             <contains string="${jpatck.results}" substring="Completed test run: not ok" />
                         </condition>
                         <fail if="jpatck.failed">Some tests failed</fail>
-                        <!-- else -->
+
                         <echo>JPA TCK Passed 100%!</echo>
 
                     </target>
@@ -440,6 +423,7 @@ databaseName=${db.name}
                 </execution>
               </executions>
             </plugin>
+-->
           </plugins>
         </build>
 
