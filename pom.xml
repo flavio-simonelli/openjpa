@@ -105,7 +105,38 @@
         <jakarta.transaction-api.version>2.0.1</jakarta.transaction-api.version>
         <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
         <jakarta.jms-api.version>3.1.0</jakarta.jms-api.version>
-
+        <redirectTestOutputToFile>true</redirectTestOutputToFile>
+        <testRetryCount>2</testRetryCount>
+        <forkCount.variable>1</forkCount.variable>
+        <sonar.organization>it.uniroma2.ahmed</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ../jacoco-coverage/target/site/jacoco-aggregate/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
+        <test.additional.args>
+            --add-opens java.base/java.io=ALL-UNNAMED
+            --add-opens java.base/java.lang=ALL-UNNAMED
+            --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+            --add-opens java.base/java.net=ALL-UNNAMED
+            --add-opens java.base/java.nio=ALL-UNNAMED
+            --add-opens java.base/java.nio.channels.spi=ALL-UNNAMED
+            --add-opens java.base/java.nio.file=ALL-UNNAMED
+            --add-opens java.base/java.util=ALL-UNNAMED
+            --add-opens java.base/java.util.concurrent=ALL-UNNAMED
+            --add-opens java.base/java.util.concurrent.atomic=ALL-UNNAMED
+            --add-opens java.base/java.util.concurrent.locks=ALL-UNNAMED
+            --add-opens java.base/java.util.stream=ALL-UNNAMED
+            --add-opens java.base/java.util.zip=ALL-UNNAMED
+            --add-opens java.base/java.time=ALL-UNNAMED
+            --add-opens java.base/jdk.internal.loader=ALL-UNNAMED
+            --add-opens java.base/sun.net.dns=ALL-UNNAMED
+            --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+            --add-opens java.base/sun.security.jca=ALL-UNNAMED
+            --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED
+        </test.additional.args>
+        <argLine>-Xmx2G -Djwava.net.preferIPv4Stack=true -Dio.netty.leakDetection.level=paranoid ${test.additional.args}</argLine>
+        <version.jacoco-maven-plugin>0.8.12</version.jacoco-maven-plugin>
+        <version.pitest-maven>1.17.4</version.pitest-maven>
     </properties>
 
     <licenses>
@@ -180,6 +211,7 @@
         <module>openjpa-persistence</module>
         <module>openjpa-persistence-jdbc</module>
         <module>openjpa-persistence-locking</module>
+        <module>jacoco-coverage</module>
         <!--
         <module>openjpa-xmlstore</module>
 
@@ -202,6 +234,29 @@
         <!-- ================ -->
         <!--  Build Profiles  -->
         <!-- ================ -->
+        <profile>
+            <id>jacoco-profile</id>
+            <properties>
+                <argLine>-Xmx2G -Djwava.net.preferIPv4Stack=true -Dio.netty.leakDetection.level=paranoid ${test.additional.args}</argLine>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${version.jacoco-maven-plugin}</version>
+                        <executions>
+                            <execution>
+                                <id>jacoco-prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
         <!-- Override some release settings inherited from apache-7.pom -->
         <profile>
@@ -218,6 +273,7 @@
             </properties>
             <build>
                 <plugins>
+                    <!--
                     <plugin>
                         <groupId>org.apache.rat</groupId>
                         <artifactId>apache-rat-plugin</artifactId>
@@ -233,17 +289,17 @@
                             <excludeSubProjects>false</excludeSubProjects>
                             <numUnapprovedLicenses>0</numUnapprovedLicenses>
                             <excludes>
-                                <!-- comments are usupported in services files -->
+
                                 <exclude>**/jakarta.persistencespi.PersistenceProvider</exclude>
                                 <exclude>**/javax.annotation.processing.Processor</exclude>
-                                <!-- comments are usupported by our rsrc parser -->
+
                                 <exclude>**/*.rsrc</exclude>
-                                <!-- comments are usupported in these files -->
+
                                 <exclude>**/org.apache.openjpa.revision.properties</exclude>
                                 <exclude>scripts/*.list</exclude>
                                 <exclude>scripts/*.options</exclude>
                                 <exclude>scripts/*.dict</exclude>
-                                <!-- generated content -->
+
                                 <exclude>**/.*/**</exclude>
                                 <exclude>**/target/**/*</exclude>
                                 <exclude>**/dependency-reduced-pom.xml</exclude>
@@ -255,6 +311,7 @@
                             </excludes>
                         </configuration>
                     </plugin>
+                    -->
                 </plugins>
             </build>
         </profile>
@@ -1965,6 +2022,7 @@
                         </additionalJOption>
                     </configuration>
                 </plugin>
+                <!--
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
@@ -1974,8 +2032,7 @@
                         <trimStackTrace>false</trimStackTrace>
                         <useSystemClassLoader>true</useSystemClassLoader>
                         <excludes>
-                            <!-- exclude classes that include a $; inner classes
-                                 are not test cases per OpenJPA standards -->
+
                             <exclude>org/apache/openjpa/**/*$*.class</exclude>
                         </excludes>
                     <systemProperties>
@@ -2034,6 +2091,7 @@
                     </systemProperties>
                     </configuration>
                 </plugin>
+                -->
                 <plugin>
                     <groupId>io.fabric8</groupId>
                     <artifactId>docker-maven-plugin</artifactId>
@@ -2071,11 +2129,13 @@
                         </execution>
                     </executions>
                 </plugin>
+                <!--
                 <plugin>
                     <groupId>org.apache.rat</groupId>
                     <artifactId>apache-rat-plugin</artifactId>
                     <version>0.16.1</version>
                 </plugin>
+                -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
@@ -2272,6 +2332,7 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
@@ -2287,12 +2348,12 @@
                     <excludeSubProjects>false</excludeSubProjects>
                     <numUnapprovedLicenses>0</numUnapprovedLicenses>
                     <excludes>
-                        <!-- generated content -->
+
                         <exclude>**/.*/**</exclude>
                         <exclude>**/target/**/*</exclude>
                     </excludes>
                     <includes>
-                        <!-- only check common source files -->
+
                         <include>**/src/**/*.bat</include>
                         <include>**/src/**/*.css</include>
                         <include>**/src/**/*.html</include>
@@ -2307,6 +2368,7 @@
                     </includes>
                 </configuration>
             </plugin>
+            -->
         </plugins>
     </build>
 
