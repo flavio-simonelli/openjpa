@@ -138,6 +138,7 @@
             -->
 
             <!-- new way of using openjpa-maven-plugin to enhance classes -->
+            <!--
             <plugin>
                 <groupId>org.apache.openjpa</groupId>
                 <artifactId>openjpa-maven-plugin</artifactId>
@@ -155,9 +156,9 @@
                             <goal>test-enhance</goal>
                         </goals>
                     </execution>
+
                 </executions>
                 <dependencies>
-                    <!-- use o-p-j instead of openjpa to avoid cyclical dependency in maven graph -->
                     <dependency>
                         <groupId>org.apache.openjpa</groupId>
                         <artifactId>openjpa-persistence-jdbc</artifactId>
@@ -165,6 +166,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            -->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
