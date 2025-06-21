@@ -5,3 +5,4 @@ Questo file contiene tutti i passaggi che sono stati effettuati per il progetto:
     - openjpa-persistence-jdbc
    perché utilizzava uno script di enhancement (enhancer.xml) legato esclusivamente ai test, che sono stati rimossi per esigenze di progetto. La rimozione evita errori di build dovuti all’assenza dei file ".class" generati dai test.
    Inoltre ho tolto openjpa-maven-plugin, che era presente in vari moduli, perché causava errori di build.
+4. Creata una cartella tools nella root del progetto per insertire i jar dei tools utilizzati per la creazione dei test automatica, per adesso è stato inserito solamente il jar di evosuite.
