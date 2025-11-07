@@ -106,6 +106,8 @@
         <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
         <jakarta.jms-api.version>3.1.0</jakarta.jms-api.version>
 
+        <sonar.organization>flavio-simonelli</sonar.organization>
+
     </properties>
 
     <licenses>
