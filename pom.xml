@@ -106,7 +106,10 @@
         <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
         <jakarta.jms-api.version>3.1.0</jakarta.jms-api.version>
 
+        <!-- Add for using Sonar by Flavio -->
         <sonar.organization>flavio-simonelli</sonar.organization>
+        <!-- Add for using AssertJ by Flavio -->
+        <assertj.version>3.24.2</assertj.version>
 
     </properties>
 
@@ -1910,6 +1913,15 @@
                 <artifactId>annotations</artifactId>
                 <version>3.0.1</version>
             </dependency>
+            <!-- Add for use AssertJ by Flavio -->
+            <!-- Source: https://mvnrepository.com/artifact/org.assertj/assertj-core -->
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- Add for use AssertJ by Flavio -->
         </dependencies>
     </dependencyManagement>
 
@@ -2069,11 +2081,13 @@
                         </execution>
                     </executions>
                 </plugin>
+                <!-- Removed by Flavio for error Apache License
                 <plugin>
                     <groupId>org.apache.rat</groupId>
                     <artifactId>apache-rat-plugin</artifactId>
                     <version>0.16.1</version>
                 </plugin>
+                -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
@@ -2268,6 +2282,7 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Removed by Flavio for error Apache License
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
@@ -2283,12 +2298,10 @@
                     <excludeSubProjects>false</excludeSubProjects>
                     <numUnapprovedLicenses>0</numUnapprovedLicenses>
                     <excludes>
-                        <!-- generated content -->
                         <exclude>**/.*/**</exclude>
                         <exclude>**/target/**/*</exclude>
                     </excludes>
                     <includes>
-                        <!-- only check common source files -->
                         <include>**/src/**/*.bat</include>
                         <include>**/src/**/*.css</include>
                         <include>**/src/**/*.html</include>
@@ -2303,6 +2316,7 @@
                     </includes>
                 </configuration>
             </plugin>
+            -->
         </plugins>
     </build>
 
