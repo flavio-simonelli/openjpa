@@ -110,6 +110,9 @@
         <sonar.organization>flavio-simonelli</sonar.organization>
         <!-- Add for using AssertJ by Flavio -->
         <assertj.version>3.24.2</assertj.version>
+        <!-- Add for using Jacoco by Flavio -->
+        <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
+        <skipJacoco>false</skipJacoco>
 
     </properties>
 

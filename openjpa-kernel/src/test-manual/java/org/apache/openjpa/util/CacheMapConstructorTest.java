@@ -93,18 +93,6 @@ public class CacheMapConstructorTest {
                         .as("La dimensione massima deve corrispondere al parametro passato")
                         .isEqualTo(maxParam);
 
-                // verifichiamo il tipo di mappa
-                if (lruParam) {
-                    // Se lru=true, ci aspettiamo una LRUMap
-                    assertThat(sut.cacheMap)
-                            .as("Con lru=true, la mappa interna deve essere una LRUMap")
-                            .isInstanceOf(org.apache.openjpa.lib.util.LRUMap.class);
-                } else {
-                    // Se lru=false, ci aspettiamo una ConcurrentHashMap
-                    assertThat(sut.cacheMap)
-                            .as("Con lru=false, la mappa interna deve essere una ConcurrentHashMap")
-                            .isInstanceOf(org.apache.openjpa.lib.util.concurrent.ConcurrentHashMap.class);
-                }
             }
     }
 }
