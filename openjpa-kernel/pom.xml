@@ -214,8 +214,10 @@
                             <outputDirectory>${project.build.directory}/coverage-reports/jacoco</outputDirectory>
                             <includes>
                                 <include>org/apache/openjpa/util/CacheMap.class</include>
+                                <!--
                                 <include>org/apache/openjpa/util/ProxyManagerImpl.class</include>
                                 <include>org/apache/openjpa/util/proxy/DelayedArrayListProxy.class</include>
+                                -->
                             </includes>
                         </configuration>
                     </execution>
@@ -230,6 +232,33 @@
                 <configuration>
                     <argLine>${surefireArgLine}</argLine>
                 </configuration>
+            </plugin>
+
+            <!-- Add for using Pitest by Flavio -->
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <configuration>
+                    <targetClasses>
+                        <param>org.apache.openjpa.util.CacheMap</param>
+                    </targetClasses>
+                    <skip>${skipPit}</skip>
+                    <threads>1</threads>
+                    <outputFormats>
+                        <param>XML</param>
+                        <param>HTML</param>
+                    </outputFormats>
+                    <exportLineCoverage>true</exportLineCoverage>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>pitest-execution</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>mutationCoverage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
