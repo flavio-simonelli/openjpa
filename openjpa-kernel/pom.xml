@@ -93,6 +93,13 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Add for using mockito by Flavio -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>4.11.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -207,6 +214,8 @@
                             <outputDirectory>${project.build.directory}/coverage-reports/jacoco</outputDirectory>
                             <includes>
                                 <include>org/apache/openjpa/util/CacheMap.class</include>
+                                <include>org/apache/openjpa/util/ProxyManagerImpl.class</include>
+                                <include>org/apache/openjpa/util/proxy/DelayedArrayListProxy.class</include>
                             </includes>
                         </configuration>
                     </execution>
