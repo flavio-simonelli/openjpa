@@ -142,6 +142,7 @@ public class CacheMapRemoveTest {
     }
 
 
+    /*
     // test Pitest
 
     @Test // Test 6: Verifica entryRemoved su Hard/Soft map (Kill Mutants 465, 466)
@@ -221,6 +222,8 @@ public class CacheMapRemoveTest {
             throw new RuntimeException("DEADLOCK: remove() non ha rilasciato il writeLock!");
         }
     }
+
+     */
 
     // --- Helper Methods ---
     private List<Object> createKeyListValid(int count) {

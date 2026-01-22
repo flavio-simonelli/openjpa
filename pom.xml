@@ -116,6 +116,9 @@
         <!-- Add for using PitTest by Flavio -->
         <pitest-maven-plugin.version>1.17.4</pitest-maven-plugin.version>
         <skipPit>false</skipPit>
+        <!-- Add for using Evosuite by Flavio -->
+        <evosuiteVersion>1.2.0</evosuiteVersion>
+
     </properties>
 
     <licenses>
@@ -1926,7 +1929,13 @@
                 <version>${assertj.version}</version>
                 <scope>test</scope>
             </dependency>
-            <!-- Add for use AssertJ by Flavio -->
+            <!-- Add for use Evosuite by Flavio -->
+            <dependency>
+                <groupId>org.evosuite</groupId>
+                <artifactId>evosuite-standalone-runtime</artifactId>
+                <version>${evosuiteVersion}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -2203,6 +2212,18 @@
                     <artifactId>pitest-maven</artifactId>
                     <version>${pitest-maven-plugin.version}</version>
                 </plugin>
+                <!-- Add for using Evosuite by Flavio -->
+<!--                <plugin>-->
+<!--                    <groupId>org.evosuite.plugins</groupId>-->
+<!--                    <artifactId>evosuite-maven-plugin</artifactId>-->
+<!--                    <version>${evosuiteVersion}</version>-->
+<!--                    <executions>-->
+<!--                        <execution>-->
+<!--                            <goals> <goal>prepare</goal> </goals>-->
+<!--                            <phase>process-test-classes</phase>-->
+<!--                        </execution>-->
+<!--                    </executions>-->
+<!--                </plugin>-->
             </plugins>
         </pluginManagement>
 

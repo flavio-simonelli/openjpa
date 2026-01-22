@@ -42,6 +42,7 @@ public class CacheMapConstructorTest {
                 // lru, max, size, load, conc, Expected Exception (null = Success)
                 { false, 3,  2,  0.0001f, 1,  null },
                 { true,  3,  2,  0.0001f, 1,  null },
+                { true, 1,  0,  0.0001f, 1,  Exception.class },
                 { false, 3,  2, -0.0001f, 1,  Exception.class },
                 { false, 3,  2,  0f,      1,  Exception.class },
                 { false, 3,  2,  1f,      1,  null },
@@ -49,10 +50,10 @@ public class CacheMapConstructorTest {
                 //{ false, 3,  2,  0.0001f, -1, Exception.class }, // errore il livello di concorrenza non viene utilizzato
                 //{ false, 3,  2,  0.0001f, 0,  Exception.class }, // errore il livello di concorrenza non viene utilizzato
                 //{ false, 3, -1,  0.0001f, 1,  Exception.class }, // viene applicata Sanitizzazione non specificata in documentazione (default 500)
-                //{ false, 0,  0,  0.0001f, 1,  Exception.class },
-                { false, 1,  0,  0.0001f, 1,  null },
+                //{ false, 0,  0,  0.0001f, 1,  Exception.class }, // avrebbe dovuto lanciare una eccezione invece viene istanziata
+                //{ false, 1,  0,  0.0001f, 1,  Exception.class }, // avrebbe dovuto lanciare una eccezione invece viene istanziata
                 //{ false, -1, 2,  0.0001f, 1,  Exception.class }, // viene applicata Sanitizzazione non specificata in documentazione (default Integer.MAX_VALUE)
-                //{ false, 0,  2,  0.0001f, 1,  Exception.class },
+                //{ false, 0,  2,  0.0001f, 1,  Exception.class }, // avrebbe dovuto lanciare una eccezione visto la max = 0
                 //{ false, 1,  2,  0.0001f, 1,  Exception.class }, // viene considerato valido allocare più memoria di quanta necessaria
                 { false, 2,  2,  0.0001f, 1,  null }
         });

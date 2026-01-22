@@ -1,15 +1,8 @@
 package org.apache.openjpa.util;
 
-import org.apache.openjpa.exceptions.IllegalTestConfigurationException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -267,7 +260,6 @@ public class CacheMapPutTest {
         // Check stato iniziale
         assertThat(sut.size()).isEqualTo(11);
         assertThat(sut.get(keys.get(2))).isEqualTo(values.get(2));
-        //verifyMapContent(keys, values, "PRE-CONDITION");
         // --- 3. AZIONE 1: RIMUOVI ELEMENTO IN HARD ---
         // Rimuoviamo K10 (che sappiamo essere in Hard)
         sut.remove(keyInHard);
@@ -278,7 +270,6 @@ public class CacheMapPutTest {
         assertThat(sut.size()).isEqualTo(10);
         // K10 deve essere sparito
         assertThat(sut.containsKey(keyInHard)).isFalse();
-        //verifyMapContent(keys, values, "FASE1-CONDITION");
         // --- 5. AZIONE 2: AGGIORNA ELEMENTO IN SOFT (PROMOZIONE) ---
         // Prendiamo K0 (che è in Soft) e facciamo una PUT.
         // con la PUT/UPDATE deve rientrare nella HardMap.
@@ -290,7 +281,6 @@ public class CacheMapPutTest {
         // Ci devono essere 10 elementi (K0..K9). K10 era stato rimosso.
         assertThat(sut.size()).isEqualTo(10);
         assertThat(sut.get(keyInSoft)).isEqualTo(newVal);
-        //verifyMapContent(keys, values, "FASE2-CONDITION");
         // --- 7. VERIFICA "SOFTNESS" ---
         // Chiudiamo la SoftMap.
         // Se K0 fosse rimasto "parcheggiato" in Soft nonostante l'update, ora verrebbe cancellato.
@@ -301,7 +291,7 @@ public class CacheMapPutTest {
                 .as("Dopo l'update, K0 deve essere tornato in Hard, quindi nessuno deve sparire al flush della Soft")
                 .isEqualTo(10);
         // B. Verifica tutti siano rimasti nella cacheMap
-        verifyMapContent(keys, values, "FASE3-CONDITION");
+        verifyMapContent(keys, values);
     }
 
     @Test // Test 6: Existing Pinned, Size < Max -> Update OK, Remains Pinned
@@ -389,7 +379,7 @@ public class CacheMapPutTest {
         verifyMapContent(keys, values, "POST-UPDATE");
     }
 
-    @Test // Test 9: Existing Pinned -> Update Value -> Remains Pinned, No Eviction
+    @Test // Test 8: Existing Pinned -> Update Value -> Remains Pinned, No Eviction
     public void testUpdate_ExistingPinned_RemainsPinned() {
         // --- 1. SETUP ---
         int maxHard = 10;
@@ -451,7 +441,7 @@ public class CacheMapPutTest {
      *      * 5. CRASH: K1 non può sedersi e viene eliminato definitivamente.
      *      * * RISULTATO (con Size=1): Hai 10 persone nella Hard e 0 nella Soft. Totale 10 (Fail).
      *      * SOLUZIONE (con Size=2): K1 trova una sedia libera nel buffer mentre K0 libera la sua.
-    @Test // Test 10: Existing Soft -> Update -> Promoted to Hard, Another Evicted to Soft
+    @Test // Test 9: Existing Soft -> Update -> Promoted to Hard, Another Evicted to Soft
     public void OLDtestUpdate_ExistingSoft_PromotesToHard_EvictsOther() {
         // --- 1. SETUP ---
         int maxHard = 10;
@@ -515,7 +505,7 @@ public class CacheMapPutTest {
      **/
 
 
-    @Test // Test 10: Existing Soft -> Update -> Promoted to Hard, Another Evicted to Soft
+    @Test // Test 9: Existing Soft -> Update -> Promoted to Hard, Another Evicted to Soft
     public void testUpdate_ExistingSoft_PromotesToHard_EvictsOther() {
         // --- 1. SETUP ---
         int maxHard = 10;
@@ -575,6 +565,83 @@ public class CacheMapPutTest {
         keys.remove(1);   // Rimuoviamo K1
         values.remove(1); // Rimuoviamo valore di K1
         verifyMapContent(keys, values, "FINAL-CHECK");
+    }
+
+    @Test // Test Aggiuntivo 10: Init Max=0 e Size=0 -> Put Valid -> Map Remains Empty
+    public void testPut_MaxZeroSizeZero_MapRemainsEmpty() {
+        // --- 1. SETUP ---
+        // Inizializziamo la mappa direttamente con max=0 e size=0
+        sut = new CacheMap(false, 0, 0, 0.5f);
+
+        Object key = "KeyValid";
+        Object value = "ValueValid";
+
+        // Verifichiamo pre-condizioni
+        assertThat(sut.size()).as("La mappa inizializzata a 0 deve essere vuota").isEqualTo(0);
+
+        // --- 2. ACTION ---
+        // Proviamo a inserire un elemento valido
+        Object result = sut.put(key, value);
+
+        // --- 3. ASSERTIONS ---
+        // A. Il risultato deve essere null (nessun valore precedente rimpiazzato)
+        assertThat(result)
+                .as("La put in una mappa a capacità 0 deve ritornare null")
+                .isNull();
+
+        // B. La Size deve rimanere 0
+        assertThat(sut.size())
+                .as("La dimensione deve rimanere 0 dopo l'inserimento se max è 0")
+                .isEqualTo(0);
+    }
+
+    @Test // Test Aggiuntivo 11: Init Max=0 -> Put Valid -> Map Remains Empty
+    public void testPut_MaxZeroSizeOne_MapRemainsEmpty() {
+        // --- 1. SETUP ---
+        // Inizializziamo la mappa direttamente con max=0 e size=1
+        sut = new CacheMap(false, 0, 1, 0.5f);
+
+        Object key = "KeyValid";
+        Object value = "ValueValid";
+
+        // Verifichiamo pre-condizioni
+        assertThat(sut.size()).as("La mappa inizializzata a 0 deve essere vuota").isEqualTo(0);
+
+        // --- 2. ACTION ---
+        // Proviamo a inserire un elemento valido
+        Object result = sut.put(key, value);
+
+        // --- 3. ASSERTIONS ---
+        // A. Il risultato deve essere null (nessun valore precedente rimpiazzato)
+        assertThat(result)
+                .as("La put in una mappa a capacità 0 deve ritornare null")
+                .isNull();
+
+        // B. La Size deve rimanere 0
+        assertThat(sut.size())
+                .as("La dimensione deve rimanere 0 dopo l'inserimento se max è 0")
+                .isEqualTo(0);
+    }
+
+    @Test // Test per coprire: if (cacheMap.getMaxSize() == 0) return null;
+    public void testPut_MaxSizeZero_ReturnsNull() {
+        // --- 1. SETUP ---
+        // Inizializziamo la mappa con dimensione 0
+        sut = new CacheMap(false, 1);
+        sut.setCacheSize(0);
+
+        Object key = "Key";
+        Object value = "Value";
+
+        // --- 2. ACTION ---
+        Object result = sut.put(key, value);
+
+        // --- 3. VERIFICA ---
+        // A. Deve ritornare null (come da codice return null)
+        assertThat(result).isNull();
+
+        // B. Non deve aver inserito nulla (né in cacheMap, né in softMap)
+        assertThat(sut.size()).isEqualTo(0);
     }
 
     private void verifyMapContent(List<Object> k, List<Object> v) {
