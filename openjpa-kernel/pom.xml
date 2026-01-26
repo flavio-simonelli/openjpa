@@ -219,10 +219,7 @@
                             <outputDirectory>${project.build.directory}/coverage-reports/jacoco</outputDirectory>
                             <includes>
                                 <include>org/apache/openjpa/util/CacheMap.class</include>
-                                <!--
                                 <include>org/apache/openjpa/util/ProxyManagerImpl.class</include>
-                                <include>org/apache/openjpa/util/proxy/DelayedArrayListProxy.class</include>
-                                -->
                             </includes>
                         </configuration>
                     </execution>
@@ -252,6 +249,7 @@
                 <configuration>
                     <targetClasses>
                         <param>org.apache.openjpa.util.CacheMap</param>
+                        <param>org.apache.openjpa.util.ProxyManagerImpl</param>
                     </targetClasses>
                     <skip>${skipPit}</skip>
                     <threads>1</threads>
