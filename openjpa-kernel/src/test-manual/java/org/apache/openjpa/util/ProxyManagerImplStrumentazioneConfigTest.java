@@ -167,20 +167,26 @@ public class ProxyManagerImplStrumentazioneConfigTest {
                 .isInstanceOf(ArrayList.class);
     }
 
-//    @Test // fallisce perchè non è fra gli oggetti che possono essere Delayed
-//    public void testDelayCollectionLoading_WithHashMap_ShouldReturnDelayedProxy() {
-//        configureManager(mgr, true, false, true, "");
-//
-//        HashMap<String, Integer> orig = new HashMap<>();
-//        Object result = mgr.newCustomProxy(orig, false);
-//
-//        assertThat(result)
-//                .as("Con Delayed attivo il proxy deve ritornare un'istanza che implementa DelayedProxy e deve continuare ad essere un'HashMap")
-//                .isNotNull()
-//                .isNotSameAs(orig)
-//                .isInstanceOf(DelayedProxy.class)
-//                .isInstanceOf(HashMap.class);
-//    }
+    @Ignore
+    @Test // pur essendo una classe che implementa collection non ha un suo proxy delayed
+    public void testDelayCollectionLoading_WithArrayDeque_ShouldReturnDelayedProxy() {
+        configureManager(mgr, true, false, true, "");
+
+        // 1. Creiamo l'istanza originale di ArrayDeque
+        ArrayDeque<String> orig = new ArrayDeque<>();
+        orig.add("Primo Elemento");
+
+        // 2. Chiediamo al manager di creare il proxy
+        Object result = mgr.newCustomProxy(orig, false);
+
+        // 3. Asserzioni
+        assertThat(result)
+                .as("Con Delayed attivo il proxy deve ritornare un'istanza che implementa DelayedProxy e deve continuare ad essere una ArrayDeque")
+                .isNotNull()
+                .isNotSameAs(orig)
+                .isInstanceOf(DelayedProxy.class)
+                .isInstanceOf(ArrayDeque.class);
+    }
 
     @Test
     public void testDelayCollectionLoading_WithTreeSet_ShouldReturnDelayedProxy() {

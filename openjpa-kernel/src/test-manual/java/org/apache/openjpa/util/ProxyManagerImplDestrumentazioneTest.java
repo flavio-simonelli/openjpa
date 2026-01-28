@@ -46,7 +46,7 @@ public class ProxyManagerImplDestrumentazioneTest {
 
     @Ignore
     @Test // il test fallisce perchè non viene controllata l'implementazione di clonable
-    public void testCopyCustom_CustomClonable_ReturnsNewIstance() {
+    public void testCopyCustom_CustomCloneable_ReturnsNewIstance() {
         ProxyManagerImplTestUtil.CustomCloneable orig = new ProxyManagerImplTestUtil.CustomCloneable("Test");
         Object result = proxyManager.copyCustom(orig);
         assertThat(result)
