@@ -333,10 +333,8 @@ public class ProxyManagerImplDestrumentazioneTest {
 
     // Test aggiunti dopo analisi con Jacoco
 
-    // mancava un test che verificava la copia nel caso in cui Object orig è uno standard GregorianCalendar non Proxy
-    @Test // Case 15
+    @Test // Case 15 -> analisi di copyCustom con un calendario gregoriano standard (non Proxy)
     public void testCopyCustom_CalendarStandard_ReturnsStandardGregorianCalendar() {
-        // Setup: Calendar con TimeZone specifica
         GregorianCalendar origCal = new GregorianCalendar();
         TimeZone zone = TimeZone.getTimeZone("GMT+5");
         origCal.setTimeZone(zone);
@@ -356,8 +354,7 @@ public class ProxyManagerImplDestrumentazioneTest {
                 .isEqualTo(zone);
     }
 
-    //mancava un test che verficasse la copia di una Data standard
-    @Test // Case 13
+    @Test // Case 16 -> copyCustom con un Timestamp standard non proxy
     public void testCopyCustom_TimestampStandard_ReturnsStandardTimestampWithNanos() {
         long fixedTimeInMillis = 1672531200000L;
         int fixedNanos = 123456;
@@ -388,8 +385,7 @@ public class ProxyManagerImplDestrumentazioneTest {
                 .isEqualTo(origTs);
     }
 
-    // mancava un test che verificasse la copia di una standard map
-    @Test // Case 11
+    @Test // Case 17 -> copyCustom con una Mappa standard non proxy
     public void testCopyCustom_HashMapStandard_ReturnsStandardHashMap() {
         Map<String, Integer> origMap = new HashMap<String, Integer>();
         for (int i = 0; i < 10; i++) {
@@ -412,25 +408,27 @@ public class ProxyManagerImplDestrumentazioneTest {
                 .containsAllEntriesOf(origMap);
     }
 
-    @Test // Case: copyMap con input null
+    // interfacce specifiche per tipo di oggetto
+
+    @Test // Case 18: copyMap con input null
     public void testCopyMap_NullInput_ReturnsNull() {
         Map result = proxyManager.copyMap(null);
         assertThat(result).isNull();
     }
 
-    @Test // Case: copyDate con input null
+    @Test // Case 19: copyDate con input null
     public void testCopyDate_NullInput_ReturnsNull() {
         Date result = proxyManager.copyDate(null);
         assertThat(result).isNull();
     }
 
-    @Test // Case: copyCalendar con input null
+    @Test // Case 20: copyCalendar con input null
     public void testCopyCalendar_NullInput_ReturnsNull() {
         Calendar result = proxyManager.copyCalendar(null);
         assertThat(result).isNull();
     }
 
-    @Test
+    @Test // Case 21: copyCollection con input proxy
     public void testCopyCollection_WithRealProxy_ShouldDelegateCopy() {
         @SuppressWarnings("unchecked")
         List<String> proxy = (List<String>) proxyManager.newCollectionProxy(
@@ -448,7 +446,7 @@ public class ProxyManagerImplDestrumentazioneTest {
                 .contains("Elemento 1");
     }
 
-    @Test
+    @Test // Case 22: copyMap con input Mappa Proxy
     public void testCopyMap_WithRealProxy_ShouldDelegateCopy() {
         @SuppressWarnings("unchecked")
         Map<String, Integer> proxy = (Map<String, Integer>) proxyManager.newMapProxy(
@@ -466,7 +464,7 @@ public class ProxyManagerImplDestrumentazioneTest {
                 .containsEntry("Chiave", 100);
     }
 
-    @Test
+    @Test // Case 23: copyDate con input Date Proxy
     public void testCopyDate_WithRealProxy_ShouldDelegateCopy() {
         java.util.Date proxy = (java.util.Date) proxyManager.newDateProxy(java.util.Date.class);
         long now = 1600000000000L;
@@ -483,7 +481,7 @@ public class ProxyManagerImplDestrumentazioneTest {
                 .hasTime(now);
     }
 
-    @Test
+    @Test // Case 24: copyCalendar con input Calendar Proxy
     public void testCopyCalendar_WithRealProxy_ShouldDelegateCopy() {
         Calendar proxy = (Calendar) proxyManager.newCalendarProxy(GregorianCalendar.class, TimeZone.getDefault());
         long now = 1600000000000L;
@@ -501,7 +499,7 @@ public class ProxyManagerImplDestrumentazioneTest {
         assertThat(copyResult.getTimeInMillis()).isEqualTo(now);
     }
 
-    @Test // Case 1: Array Valido (Happy Path)
+    @Test // Case 25: copyArray con array standard
     public void testCopyArray_WithValidArray_ShouldReturnCopy() {
         // 2. Creiamo un array di input
         String[] orig = new String[] { "A", "B", "C" };
@@ -517,18 +515,15 @@ public class ProxyManagerImplDestrumentazioneTest {
                 .isEqualTo(orig); // Il contenuto deve essere identico
     }
 
-    @Test // Case 2: Input Null
+    @Test // Case 26: copyArray con null
     public void testCopyArray_WithNull_ShouldReturnNull() {
         Object result = proxyManager.copyArray(null);
 
         assertThat(result).isNull();
     }
 
-    @Test // Case 3: Exception Path (Input non è un array)
+    @Test // Case 27: la funzione copyArray riceve in input Object, verifichiamo il suo comportamento con un oggetto che non è un array
     public void testCopyArray_WithNonArrayObject_ShouldThrowUnsupportedException() {
-        // Passiamo una Stringa normale invece di un array.
-        // Questo farà fallire "Array.getLength(orig)" lanciando IllegalArgumentException,
-        // che verrà catturata e wrappata in UnsupportedException.
         Object notAnArray = "Non sono un array";
 
         assertThatThrownBy(() -> {
@@ -536,6 +531,13 @@ public class ProxyManagerImplDestrumentazioneTest {
         }).as("Se l'oggetto non è un array, deve lanciare UnsupportedException")
                 .isInstanceOf(org.apache.openjpa.util.UnsupportedException.class)
                 .hasCauseInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test // Case 28: copyCollection con null
+    public void testCopyCollection_WithNull_ShouldReturnNull() {
+        Object result = proxyManager.copyCollection(null);
+
+        assertThat(result).isNull();
     }
 
 }

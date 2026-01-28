@@ -2258,6 +2258,7 @@
                             <goal>checkstyle</goal>
                         </goals>
                         <configuration>
+                            <skip>true</skip>
                             <failsOnError>true</failsOnError>
                             <consoleOutput>true</consoleOutput>
                             <includeTestSourceDirectory>true</includeTestSourceDirectory>

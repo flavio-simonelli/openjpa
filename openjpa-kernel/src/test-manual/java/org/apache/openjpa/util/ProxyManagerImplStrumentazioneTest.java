@@ -242,9 +242,12 @@ public class ProxyManagerImplStrumentazioneTest {
     }
 
     @Test // {Calendar} - GregorianCalendar
-    public void newCustomProxy_WithGregorianCalendar_ShouldPreserveTimeZone() {
+    public void newCustomProxy_WithGregorianCalendar_ShouldPreserveTimeZoneAndMillis() {
         TimeZone tz = TimeZone.getTimeZone("Asia/Tokyo");
+        long fixedTime = 1709251200000L; // Un timestamp arbitrario
+
         GregorianCalendar orig = new GregorianCalendar(tz);
+        orig.setTimeInMillis(fixedTime);
 
         Object result = proxyManager.newCustomProxy(orig, false);
 
@@ -255,9 +258,15 @@ public class ProxyManagerImplStrumentazioneTest {
                 .isInstanceOf(Calendar.class);
 
         Calendar proxyCal = (Calendar) result;
+
         assertThat(proxyCal.getTimeZone())
                 .as("Il TimeZone deve essere copiato correttamente")
                 .isEqualTo(tz);
+
+        // 5. Verifica Millisecondi (AGGIUNTO DOPO ANALISI CON PITEST)
+        assertThat(proxyCal.getTimeInMillis())
+                .as("I millisecondi devono essere preservati esattamente e non resettati")
+                .isEqualTo(fixedTime);
     }
 
     @Test // {Custom Bean} - POJO Semplice
@@ -318,7 +327,7 @@ public class ProxyManagerImplStrumentazioneTest {
     // test aggiunti dopo la prima iterazione con jacoco
 
     // mancava un test in cui verifichiamo il newCustomProxy con una Data che non è un timestamp
-    @Test // Case: java.util.Date
+    @Test // Test 26 -> Case: java.util.Date
     public void testNewCustomProxy_WithUtilDate_ShouldCopyTimeOnly() {
         long fixedMillis = 1609459200000L;
         java.util.Date orig = new java.util.Date(fixedMillis);
@@ -339,7 +348,7 @@ public class ProxyManagerImplStrumentazioneTest {
                 .isEqualTo(fixedMillis);
     }
 
-    @Test // Copre generazione bytecode per Mappe Standard (Ramo A)
+    @Test // Copre generazione bytecode per Mappe Standard custom ovvero classe che implementa l' interfaccia mappa
     public void testBytecodeGen_ForceNewClass_HashMap() {
         configureManager(proxyManager, true, true, false, "");
 

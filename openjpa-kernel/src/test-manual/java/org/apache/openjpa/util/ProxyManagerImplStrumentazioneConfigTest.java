@@ -211,9 +211,10 @@ public class ProxyManagerImplStrumentazioneConfigTest {
                 .isInstanceOf(List.class);
     }
 
-    @Test
+    // test aggiunti tramite coverage jacoco
+
+    @Test // case 27: verifichiamo la creazione di delay per hashSet
     public void testDelayCollectionLoading_WithHashSet_ShouldReturnDelayedProxy() {
-        // Attiviamo il Delayed Loading (4° parametro = true)
         configureManager(mgr, true, false, true, "");
 
         HashSet<String> orig = new HashSet<>();
@@ -227,7 +228,7 @@ public class ProxyManagerImplStrumentazioneConfigTest {
                 .isInstanceOf(org.apache.openjpa.util.proxy.DelayedProxy.class);
     }
 
-    @Test
+    @Test // case 28: verifichiamo la creazione di delay per linkedList
     public void testDelayCollectionLoading_WithLinkedList_ShouldReturnDelayedProxy() {
         configureManager(mgr, true, false, true, "");
 
@@ -242,7 +243,7 @@ public class ProxyManagerImplStrumentazioneConfigTest {
                 .isInstanceOf(org.apache.openjpa.util.proxy.DelayedProxy.class);
     }
 
-    @Test
+    @Test // case 29: verifichiamo la creazione di delay per Vector
     public void testDelayCollectionLoading_WithVector_ShouldReturnDelayedProxy() {
         configureManager(mgr, true, false, true, "");
 
@@ -257,7 +258,7 @@ public class ProxyManagerImplStrumentazioneConfigTest {
                 .isInstanceOf(org.apache.openjpa.util.proxy.DelayedProxy.class);
     }
 
-    @Test
+    @Test // case 30: verifichiamo la creazione di delay per linkedHashSet
     public void testDelayCollectionLoading_WithLinkedHashSet_ShouldReturnDelayedProxy() {
         configureManager(mgr, true, false, true, "");
 
@@ -272,7 +273,7 @@ public class ProxyManagerImplStrumentazioneConfigTest {
                 .isInstanceOf(org.apache.openjpa.util.proxy.DelayedProxy.class);
     }
 
-    @Test
+    @Test // case 31: verifichiamo la creazione di delay per SorteredSet
     public void testDelayCollectionLoading_WithSortedSetInterface_ShouldReturnDelayedProxy() {
         configureManager(mgr, true, false, true, "");
 
@@ -285,7 +286,7 @@ public class ProxyManagerImplStrumentazioneConfigTest {
                 .isInstanceOf(org.apache.openjpa.util.proxy.DelayedProxy.class);
     }
 
-    @Test
+    @Test // case 32: verifichiamo la creazione di delay per PriorityQueue
     public void testDelayCollectionLoading_WithPriorityQueue_ShouldReturnDelayedProxy() {
         configureManager(mgr, true, false, true, "");
 
@@ -300,22 +301,36 @@ public class ProxyManagerImplStrumentazioneConfigTest {
                 .isInstanceOf(org.apache.openjpa.util.proxy.DelayedProxy.class);
     }
 
-    @Test
-    public void testDelayCollectionLoading_WithUnsupportedType_ShouldReturnStandardProxy() {
+    @Test // case 33: verifichiamo il fallback a normale proxy per hashMap
+    public void testDelayCollectionLoading_WithUnsupportedTypeHashMap_ShouldReturnStandardProxy() {
         configureManager(mgr, true, false, true, "");
 
-        // ArrayDeque non è supportato per il Delayed loading,
-        // quindi il manager deve fare fallback e tornare un proxy normale
-        java.util.ArrayDeque<String> orig = new java.util.ArrayDeque<>();
-        orig.add("Test");
+        java.util.HashMap<String, Integer> orig = new HashMap<>();
+        orig.put("Test", 100);
 
         Object result = mgr.newCustomProxy(orig, false);
 
         assertThat(result)
                 .isNotNull()
                 .isInstanceOf(org.apache.openjpa.util.Proxy.class)
-                // Verifica cruciale: NON deve essere Delayed
-                .isNotInstanceOf(org.apache.openjpa.util.proxy.DelayedProxy.class);
+                .isNotInstanceOf(org.apache.openjpa.util.proxy.DelayedProxy.class)
+                .isInstanceOf(java.util.HashMap.class);
+    }
+
+    @Test
+    public void testSetUnproxyable_WithCustomBean_ShouldBlockProxyCreation() {
+        String customClassName = ProxyManagerImplTestUtil.CustomSimpleBean.class.getName();
+
+        configureManager(mgr, true, true, false, customClassName);
+
+        ProxyManagerImplTestUtil.CustomSimpleBean orig =
+                new ProxyManagerImplTestUtil.CustomSimpleBean();
+
+        Object result = mgr.newCustomProxy(orig, false);
+
+        assertThat(result)
+                .as("Poiché CustomSimpleBean è stato impostato come unproxyable, il metodo deve ritornare null")
+                .isNull();
     }
 
 }
