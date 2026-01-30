@@ -11,7 +11,6 @@ import java.util.concurrent.CompletableFuture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-
 public class CacheMapPutMutationTest {
 
     @Test

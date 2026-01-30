@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -211,7 +212,7 @@ public class CacheMapTest {
         assertFalse(map.unpin("key2"));
     }
 
-    /*
+    @Ignore // anche LLM ha trovato l'incongruenza con il commento sopra la funzione pin
     @Test
     public void testPinningWithRemove() {
         map.put("key1", "value1");
@@ -223,7 +224,6 @@ public class CacheMapTest {
         assertFalse(map.getPinnedKeys().contains("key1"));
         assertEquals(0, map.size());
     }
-     */
 
     @Test
     public void testPinningUpdate() {
@@ -262,26 +262,24 @@ public class CacheMapTest {
         assertEquals("valA", lruMap.get("A"));
     }
 
-    /*
-    @Test
-    public void testSoftReferencePromotion() {
-        // This test simulates the promotion from softMap to cacheMap on 'get'
-        // We create a map with capacity 1 to force immediate overflow
-        CacheMap smallMap = new CacheMap(true, 1);
-
-        smallMap.put("A", "valA");
-        smallMap.put("B", "valB");
-        // A should be overflowed to SoftMap, B in CacheMap
-
-        assertTrue(smallMap.containsKey("A"));
-
-        // Get A. This triggers:
-        // 1. softMap.get("A") -> found
-        // 2. putcache = true
-        // 3. put("A", "valA") -> moves A back to CacheMap, potentially bumping B to SoftMap
-        assertEquals("valA", smallMap.get("A"));
-    }
-     */
+//    @Test
+//    public void testSoftReferencePromotion() {
+//        // This test simulates the promotion from softMap to cacheMap on 'get'
+//        // We create a map with capacity 1 to force immediate overflow
+//        CacheMap smallMap = new CacheMap(true, 1);
+//
+//        smallMap.put("A", "valA");
+//        smallMap.put("B", "valB");
+//        // A should be overflowed to SoftMap, B in CacheMap
+//
+//        assertTrue(smallMap.containsKey("A"));
+//
+//        // Get A. This triggers:
+//        // 1. softMap.get("A") -> found
+//        // 2. putcache = true
+//        // 3. put("A", "valA") -> moves A back to CacheMap, potentially bumping B to SoftMap
+//        assertEquals("valA", smallMap.get("A"));
+//    }
 
     @Test
     public void testSoftReferencePromotion() {

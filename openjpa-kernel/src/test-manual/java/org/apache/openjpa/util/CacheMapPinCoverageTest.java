@@ -1,5 +1,6 @@
 package org.apache.openjpa.util;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
