@@ -35,7 +35,17 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '11'
-          distribution: 'temurin'
+          distribution: 'temurin
+
+      - name: Install EvoSuite Runtime locally
+        run: |
+          mvn install:install-file \
+            -Dfile=libs/evosuite-standalone-runtime-1.2.0.jar \
+            -DgroupId=org.evosuite \
+            -DartifactId=evosuite-standalone-runtime \
+            -Dversion=1.2.0 \
+            -Dpackaging=jar \
+            -DgeneratePom=true
 
       - name: Build and analyze
         env:
