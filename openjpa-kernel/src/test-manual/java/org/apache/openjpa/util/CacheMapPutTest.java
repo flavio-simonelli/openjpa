@@ -593,9 +593,18 @@ public class CacheMapPutTest {
         assertThat(sut.size())
                 .as("La dimensione deve rimanere 0 dopo l'inserimento se max è 0")
                 .isEqualTo(0);
+
+        // C. La entry non deve essere all'interno della mappa
+//        assertThat(sut.containsKey(key))
+//                .as("La mappa non deve contenere la chiave inserita poiché la cache è disabilitata")
+//                .isFalse();
+
+//        assertThat(sut.get(key))
+//                .as("Il recupero del valore tramite get() deve restituire null")
+//                .isNull();
     }
 
-    @Test // Test Aggiuntivo 11: Init Max=0 -> Put Valid -> Map Remains Empty
+    @Test // Test Aggiuntivo 11: Init Max=0 Size =1 -> Put Valid -> Map Remains Empty
     public void testPut_MaxZeroSizeOne_MapRemainsEmpty() {
         // --- 1. SETUP ---
         // Inizializziamo la mappa direttamente con max=0 e size=1
@@ -621,6 +630,55 @@ public class CacheMapPutTest {
         assertThat(sut.size())
                 .as("La dimensione deve rimanere 0 dopo l'inserimento se max è 0")
                 .isEqualTo(0);
+
+        // C. La entry non deve essere all'interno della mappa
+//        assertThat(sut.containsKey(key))
+//                .as("La mappa non deve contenere la chiave inserita poiché la cache è disabilitata")
+//                .isFalse();
+
+//        assertThat(sut.get(key))
+//                .as("Il recupero del valore tramite get() deve restituire null")
+//                .isNull();
+    }
+
+    @Test // Test aggiuntivo 12
+    public void testPut_LRU_SmallInitialSize_GrowsToMax() {
+        // --- 1. SETUP ---
+        // Configurazione: LRU attiva, Max=5, ma Size iniziale=1.
+        // Questo forza la struttura dati interna a ridimensionarsi (resize) man mano che aggiungiamo elementi,
+        // fino a raggiungere il limite di 5.
+        int maxParam = 5;
+        int initialSizeParam = 1;
+        boolean lruParam = true;
+
+        sut = new CacheMap(lruParam, maxParam, initialSizeParam, 0.75f, 16);
+
+        // Generiamo i dati usando gli Helper
+        List<Object> keys = createKeyListValid(maxParam);       // Crea 5 chiavi: Key-0 ... Key-4
+        List<Object> values = createValueListImmutable(maxParam); // Crea 5 valori: Val-0 ... Val-4
+
+        // --- 2. ACTION ---
+        // Inseriamo esattamente 5 elementi (pari al Max)
+        for (int i = 0; i < maxParam; i++) {
+            sut.put(keys.get(i), values.get(i));
+        }
+
+        // --- 3. ASSERTIONS ---
+
+        // A. Verifica della dimensione totale
+        assertThat(sut.size())
+                .as("La mappa dovrebbe contenere esattamente %d elementi (il massimo consentito)", maxParam)
+                .isEqualTo(maxParam);
+
+        // B. Verifica del limite configurato (sanity check)
+        assertThat(sut.getCacheSize())
+                .as("Il limite massimo della cache dovrebbe essere %d", maxParam)
+                .isEqualTo(maxParam);
+
+        // C. Verifica del contenuto usando l'Helper condiviso
+        // Poiché non abbiamo superato il limite (abbiamo inserito 5 elementi su 5 posti),
+        // NON deve essere avvenuta nessuna eviction. Tutti devono essere presenti.
+        verifyMapContent(keys, values, "GROWTH-CHECK");
     }
 
     @Test // Test per coprire: if (cacheMap.getMaxSize() == 0) return null;

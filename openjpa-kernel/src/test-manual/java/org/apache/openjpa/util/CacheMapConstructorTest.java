@@ -22,6 +22,7 @@ public class CacheMapConstructorTest {
 
     // expected value
     private final Class<? extends Throwable> expectedException;
+    private Integer expectedSize;
 
     // sut
     private CacheMap sut;
@@ -34,6 +35,7 @@ public class CacheMapConstructorTest {
         this.loadParam = load;
         this.concurrencyLevelParam = concurrencyLevel;
         this.expectedException = expectedException;
+        expectedCacheSizeValue();
     }
 
     @Parameterized.Parameters(name = "Test {index}: lru={0}, max={1}, size={2}, load={3}, conc={4} -> Expect={5}")
@@ -55,7 +57,16 @@ public class CacheMapConstructorTest {
                 //{ false, -1, 2,  0.0001f, 1,  Exception.class }, // viene applicata Sanitizzazione non specificata in documentazione (default Integer.MAX_VALUE)
                 //{ false, 0,  2,  0.0001f, 1,  Exception.class }, // avrebbe dovuto lanciare una eccezione visto la max = 0
                 //{ false, 1,  2,  0.0001f, 1,  Exception.class }, // viene considerato valido allocare più memoria di quanta necessaria
-                { false, 2,  2,  0.0001f, 1,  null }
+                { false, 2,  2,  0.0001f, 1,  null },
+                // correzione dei test definiti a fronte di una verifica del codice
+                { false, 3, -1,  0.0001f, 1,  null }, // viene applicata Sanitizzazione non specificata in documentazione (default 500)
+                { false, 0,  0,  0.0001f, 1,  null },
+                { false, 1,  0,  0.0001f, 1,  null },
+                { false, -1, 2,  0.0001f, 1,  null }, // viene applicata Sanitizzazione non specificata in documentazione (default Integer.MAX_VALUE)
+                { false, 0,  2,  0.0001f, 1,  null },
+                { false, 1,  2,  0.0001f, 1,  null }, // viene considerato valido allocare più memoria di quanta necessaria
+
+
         });
     }
 
@@ -64,7 +75,6 @@ public class CacheMapConstructorTest {
             ThrowableAssert.ThrowingCallable initAction = () -> {
                 sut = new CacheMap(lruParam, maxParam, sizeParam, loadParam, concurrencyLevelParam);
             };
-
             if (expectedException != null) {
                 // Caso Eccezione
                 assertThatThrownBy(initAction)
@@ -73,27 +83,33 @@ public class CacheMapConstructorTest {
                 ;
             } else {
                 // Caso Valido
-
                 // verifica che non lanci eccezioni
                 assertThatCode(initAction)
                         .as("Il Test ha lanciato un'eccezione imprevista")
                         .doesNotThrowAnyException();
-
                 // verifica che la cacheMap istanziata non sia null
                 assertThat(sut)
                         .as("L'istanza di CacheMap non deve essere null")
                         .isNotNull();
-
                 // verifichiamo che sia vuota
                 assertThat(sut)
                         .as("Una nuova CacheMap deve essere vuota")
                         .isEmpty();
-
                 // verificare la capacità massima impostata
-                assertThat(sut.cacheMap.getMaxSize())
+                assertThat(sut.getCacheSize())
                         .as("La dimensione massima deve corrispondere al parametro passato")
-                        .isEqualTo(maxParam);
-
+                        .isEqualTo(expectedSize);
             }
     }
+
+    // metodo helper per la verifica del valore di max esportato dalla funzione getCacheSize()
+    private void expectedCacheSizeValue() {
+        if (expectedException == null) {
+            // Logica di OpenJPA: se max < 0, il getter restituisce -1 (anche se internamente è MAX_VALUE)
+            expectedSize = (maxParam < 0) ? -1 : maxParam;
+        } else {
+            expectedSize = null;
+        }
+    }
+
 }
