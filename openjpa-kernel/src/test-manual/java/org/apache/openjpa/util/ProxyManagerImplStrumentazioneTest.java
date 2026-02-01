@@ -16,9 +16,6 @@ import static org.apache.openjpa.util.ProxyManagerImplTestUtil.configureManager;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * Tests della test suite dei test manuali basati sulla variazione del parametro Object orig
- */
 @RunWith(MockitoJUnitRunner.class)
 public class ProxyManagerImplStrumentazioneTest {
 
