@@ -11,7 +11,7 @@ public class CacheMapPinCoverageTest {
         // SETUP
         CacheMap sut = new CacheMap(true, 10);
         Object key = "GhostKey"; // Chiave che non esiste
-        // PRIMA CHIAMATA (Crea la Ghost Entry)
+        // PRIMA Crea la Ghost Entry
         boolean firstResult = sut.pin(key);
         assertThat(firstResult).isFalse();
         // Verifica stato intermedio: la chiave è in pinnedMap ma vale null
